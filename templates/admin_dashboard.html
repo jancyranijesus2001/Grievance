@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">Admin Overview</h4>
+
+<div class="row g-3 mb-4">
+  {% for s in status_counts %}
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title">{{ s.status }}</h6>
+        <span class="display-6">{{ s.total }}</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-3 mb-4">
+  {% for c in counts %}
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title">{{ c.category }}</h6>
+        <span class="display-6">{{ c.total }}</span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if grievances %}
+  <div class="mb-3 fw-semibold text-secondary">In Progress</div>
+  <div class="row g-3 mb-4">
+    {% for g in grievances if g.status == 'In Progress' %}
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="card-title mb-1">{{ g.title }}</h5>
+              <span class="badge bg-info text-dark">{{ g.category }}</span>
+            </div>
+            <span class="badge bg-warning text-dark badge-status">{{ g.status }}</span>
+          </div>
+          <p class="text-muted small mb-1">Student: {{ g.student_name }} | {{ g.created_at }}</p>
+          <p class="card-text">{{ g.description }}</p>
+          {% if g.image_path %}
+            <img src="{{ url_for('uploaded_file', filename=g.image_path) }}" class="img-fluid rounded mb-2" alt="attachment">
+          {% endif %}
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge bg-primary">Votes: {{ g.votes }}</span>
+            <form class="d-flex gap-2" action="{{ url_for('update_status', grievance_id=g.id) }}" method="post">
+              <select class="form-select form-select-sm" name="status">
+                <option value="In Progress" {% if g.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Completed" {% if g.status == 'Completed' %}selected{% endif %}>Completed</option>
+              </select>
+              <button class="btn btn-sm btn-outline-primary">Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3 fw-semibold text-secondary">Completed</div>
+  <div class="row g-3">
+    {% for g in grievances if g.status == 'Completed' %}
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="card-title mb-1">{{ g.title }}</h5>
+              <span class="badge bg-info text-dark">{{ g.category }}</span>
+            </div>
+            <span class="badge bg-success text-light badge-status">{{ g.status }}</span>
+          </div>
+          <p class="text-muted small mb-1">Student: {{ g.student_name }} | {{ g.created_at }}</p>
+          <p class="card-text">{{ g.description }}</p>
+          {% if g.image_path %}
+            <img src="{{ url_for('uploaded_file', filename=g.image_path) }}" class="img-fluid rounded mb-2" alt="attachment">
+          {% endif %}
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge bg-primary">Votes: {{ g.votes }}</span>
+            <form class="d-flex gap-2" action="{{ url_for('update_status', grievance_id=g.id) }}" method="post">
+              <select class="form-select form-select-sm" name="status">
+                <option value="In Progress" {% if g.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Completed" {% if g.status == 'Completed' %}selected{% endif %}>Completed</option>
+              </select>
+              <button class="btn btn-sm btn-outline-primary">Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-secondary">No grievances found.</div>
+{% endif %}
+{% endblock %}
+

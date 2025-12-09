@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>All Grievances</h4>
+  <a href="{{ url_for('create_grievance') }}" class="btn btn-success btn-sm">Raise Grievance</a>
+</div>
+
+{% if grievances %}
+  <div class="row g-3">
+    {% for g in grievances %}
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="card-title mb-1">{{ g.title }}</h5>
+              <span class="badge bg-info text-dark">{{ g.category }}</span>
+              <span class="badge bg-secondary text-light ms-1">By {{ g.student_name }}</span>
+            </div>
+            <span class="badge bg-warning text-dark badge-status">{{ g.status }}</span>
+          </div>
+          <p class="text-muted small mb-2">{{ g.created_at }}</p>
+          <p class="card-text">{{ g.description }}</p>
+          {% if g.image_path %}
+            <img src="{{ url_for('uploaded_file', filename=g.image_path) }}" class="img-fluid rounded mb-2" alt="attachment">
+          {% endif %}
+          <div class="text-end">
+            <span class="badge bg-primary">Votes: {{ g.votes }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-secondary">No grievances submitted yet.</div>
+{% endif %}
+{% endblock %}
+
